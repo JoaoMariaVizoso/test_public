@@ -1,0 +1,22 @@
+name: Terraform Deployment for App
+
+on:
+    pull_request:
+      branches: [main]
+
+    
+jobs:
+  terraform_job_nprod:
+    uses: JoaoMariaVizoso/test/.github/workflows/reusable_deploy.yml@main
+    with:
+      env: "org/test1"
+    secrets: inherit
+
+  terraform_job_prod:
+    needs: [ terraform_job_nprod]
+    uses: JoaoMariaVizoso/test/.github/workflows/reusable_deploy.yml@main
+    with:
+      env: "org/test2"
+    secrets: inherit
+
+

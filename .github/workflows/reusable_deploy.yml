@@ -1,0 +1,83 @@
+name: Reusable Workflow for Networking IAC
+
+on: 
+  workflow_call:
+    inputs: 
+      env:
+        required: true
+        type: string
+  workflow_dispatch:
+
+env: 
+  TERRAFORM_VERSION: "1.2.9"
+  TF_DIRECTORY: ${{inputs.env}}
+
+jobs: 
+  terraform_plan:
+    runs-on: ubuntu-latest
+    if: github.event.review.state != 'approved'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Get Directory Name 
+        id: dir-id
+        shell: bash
+        env:
+          DIRECTORY: ${{ env.TF_DIRECTORY}}
+        run: | 
+          DIR_NAME=$(echo $DIRECTORY | awk 'BEGIN {FS= "/" } ; { print $2 }')
+          echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          service_account: ${{ secrets.TERRAFORM_SA }}
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0.6.0'
+
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ env.TF_DIRECTORY }}
+        shell: bash
+        run: |
+          terraform init
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_DIRECTORY }}
+        shell: bash
+        run: |
+          echo 'plan<<EOF' >> $GITHUB_OUTPUT
+          terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Save Artifact
+        id: save-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.number}}-tf-plan
+          path: ${{ env.TF_DIRECTORY }}/tfplan
+
+      - name: Comment Plan
+        id: comment-plan
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{github.event.number}}
+          body: |
+            Terraform Plan for ${{env.TF_DIRECTORY}}:
+
+            ```
+            ${{ steps.plan.outputs.plan }}
+            ```
+
+            Plan saved to GH artifacts.

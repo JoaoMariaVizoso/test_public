@@ -24,6 +24,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Echo stuff
+        run: | 
+          echo "${{ inputs.enviro }}" 
+          echo environment
+          echo ${{inputs.env}}
+          echo enviro
+          echo env 
+          echo ${{ vars.TERRAFORM_SA }}
       
       - name: Get Directory Name 
         id: dir-id
@@ -44,7 +53,7 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
         with:
-          service_account: ${{ secrets.TERRAFORM_SA }}
+          service_account: ${{ vars.TERRAFORM_SA }}
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: 'Set up Cloud SDK'

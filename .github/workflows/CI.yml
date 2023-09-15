@@ -7,18 +7,18 @@ on:
     
 jobs:
   terraform_job_nprod:
-    uses: JoaoMariaVizoso/test/.github/workflows/reusable_deploy.yml@main
+    uses: JoaoMariaVizoso/test_public/.github/workflows/reusable_deploy.yml@main
     with:
       env: "org/nprd"
-      environment: nprd
+      enviro: nprd
     secrets: inherit
 
   terraform_job_prod:
     needs: [terraform_job_nprod]
-    uses: JoaoMariaVizoso/test/.github/workflows/reusable_deploy.yml@main
+    uses: JoaoMariaVizoso/test_public/.github/workflows/reusable_deploy.yml@main
     with:
       env: "org/prd"
-      environment: prd
+      enviro: prd
     secrets: inherit
 
 

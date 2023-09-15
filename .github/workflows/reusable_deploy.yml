@@ -44,7 +44,7 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
         with:
-          service_account: ${{ env.TERRAFORM_SA }}
+          service_account: ${{ vars.TERRAFORM_SA }}
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: 'Set up Cloud SDK'

@@ -6,15 +6,20 @@ on:
       env:
         required: true
         type: string
+      enviro:
+        required: true
+        type: string
   workflow_dispatch:
 
 env: 
   TERRAFORM_VERSION: "1.2.9"
   TF_DIRECTORY: ${{inputs.env}}
 
+
 jobs: 
   terraform_plan:
     runs-on: ubuntu-latest
+    environment:  ${{ inputs.enviro }}
     if: github.event.review.state != 'approved'
     steps:
       - name: Checkout code

@@ -6,7 +6,7 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket  = "tf-states-commons"
+    bucket  = "tf-states-pv-commons"
     prefix  = "terraform/main"
   }
 }

@@ -1,9 +1,10 @@
 name: Terraform Deployment for App
 
 on:
-    pull_request:
-      branches: 
-        - 'main'
+  pull_request_target:
+    types: [ opened]
+    branches: [main]
+    
     
 jobs:
   terraform_job_nprod:

@@ -28,10 +28,7 @@ jobs:
       - name: Echo stuff
         run: | 
           echo "${{ inputs.enviro }}" 
-          echo environment
           echo ${{inputs.env}}
-          echo enviro
-          echo env 
           echo ${{ vars.TERRAFORM_SA }}
       
       - name: Get Directory Name 
@@ -54,7 +51,7 @@ jobs:
         uses: 'google-github-actions/auth@v1'
         with:
           service_account: ${{ vars.TERRAFORM_SA }}
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0.6.0'

@@ -3,17 +3,11 @@ name: Reusable Workflow for Networking IAC
 on: 
   workflow_call:
     inputs: 
-      dir:
-        required: true
-        type: string
       env:
         required: true
         type: string
   workflow_dispatch:
     inputs: 
-      dir:
-        required: true
-        type: string
       env:
         required: true
         type: string

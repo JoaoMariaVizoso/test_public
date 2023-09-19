@@ -24,12 +24,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Echo stuff
-        run: | 
-          echo "${{ inputs.enviro }}" 
-          echo ${{inputs.env}}
-          echo ${{ vars.TERRAFORM_SA }}
       
       - name: Get Directory Name 
         id: dir-id

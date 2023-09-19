@@ -9,16 +9,14 @@ jobs:
   terraform_job_nprod:
     uses: JoaoMariaVizoso/test_public/.github/workflows/reusable_deploy.yml@main
     with:
-      env: "org/nprd"
-      enviro: nprd
+      env: nprd
     secrets: inherit
 
   terraform_job_prod:
     needs: [terraform_job_nprod]
     uses: JoaoMariaVizoso/test_public/.github/workflows/reusable_deploy.yml@main
     with:
-      env: "org/prd"
-      enviro: prd
+      env: prd
     secrets: inherit
 
 

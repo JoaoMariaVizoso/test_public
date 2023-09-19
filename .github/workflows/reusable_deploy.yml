@@ -3,23 +3,30 @@ name: Reusable Workflow for Networking IAC
 on: 
   workflow_call:
     inputs: 
+      dir:
+        required: true
+        type: string
       env:
         required: true
         type: string
-      enviro:
+  workflow_dispatch:
+    inputs: 
+      dir:
         required: true
         type: string
-  workflow_dispatch:
+      env:
+        required: true
+        type: string
 
 env: 
   TERRAFORM_VERSION: "1.2.9"
-  TF_DIRECTORY: ${{inputs.env}}
+  TF_DIRECTORY: format("org/{0}",${{inputs.env}})
 
 
 jobs: 
   terraform_plan:
     runs-on: ubuntu-latest
-    environment:  ${{ inputs.enviro }}
+    environment:  ${{ inputs.env}}
     if: github.event.review.state != 'approved'
     steps:
       - name: Checkout code

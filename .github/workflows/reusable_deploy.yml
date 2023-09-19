@@ -31,15 +31,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Get Directory Name 
-        id: dir-id
-        shell: bash
-        env:
-          DIRECTORY: ${{ env.TF_DIRECTORY}}
-        run: | 
-          DIR_NAME=$(echo $DIRECTORY | awk 'BEGIN {FS= "/" } ; { print $2 }')
-          echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -77,7 +68,7 @@ jobs:
         id: save-artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.number}}-tf-plan
+          name: ${{inputs.env}}-${{github.event.number}}-tf-plan
           path: ${{ env.TF_DIRECTORY }}/tfplan
 
       - name: Comment Plan

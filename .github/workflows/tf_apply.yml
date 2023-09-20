@@ -67,7 +67,6 @@ jobs:
         working-directory: ${{ env.TF_DIRECTORY}}
         shell: bash
         run: |
-            Terraform Apply for ${{ env.TF_DIRECTORY}}:
             echo 'apply<<EOF' 
             terraform apply --var-file='env.tfvars' -input=false -no-color tfplan 
             echo 'EOF' 

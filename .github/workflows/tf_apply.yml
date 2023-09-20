@@ -4,6 +4,8 @@ name: Terraform Apply
 # This workflow is triggered once a PR is merged 
 on:
   workflow_dispatch:
+    branches:
+      -
 
 # Define Terraform Version and directory where it will run
 env: 
@@ -12,6 +14,7 @@ env:
 
 jobs:
   terraform_apply:
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: nprd
         
@@ -68,4 +71,18 @@ jobs:
         shell: bash
         run: |
             terraform apply -input=false -no-color tfplan 
+  
+  wrong_branch:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: nprd
+        
+    steps:
+      - name: Wrong branch warning     
+        shell: bash
+        run: |
+          echo "This pipeline is not able to run on main branch."
+          echo "To deploy to main branch, please create a PR."
+
+
     

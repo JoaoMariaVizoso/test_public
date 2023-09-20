@@ -14,16 +14,14 @@ on:
 # Define Terraform Version and directory where it will run
 env: 
   TERRAFORM_VERSION: "1.2.9"
+  TF_DIRECTORY: "org/nprd"
 
 jobs: 
   terraform_plan:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        TF_DIRECTORY: ["org/nprd"]
+    environment: nprd
+       
     
-    if: github.event.review.state != 'approved'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -32,7 +30,7 @@ jobs:
         id: dir-id
         shell: bash
         env:
-          DIRECTORY: ${{ matrix.TF_DIRECTORY}}
+          DIRECTORY: ${{ env.TF_DIRECTORY}}
         run: | 
           DIR_NAME=$(echo $DIRECTORY | awk 'BEGIN {FS= "/" } ; { print $2 }')
           echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
@@ -47,22 +45,22 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
         with:
-          service_account: ${{ secrets.TERRAFORM_SA }}
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          service_account: ${{ vars.TERRAFORM_SA }}
+          credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
       - name: Terraform Init
         id: init
-        working-directory: ${{ matrix.TF_DIRECTORY}}
+        working-directory: ${{ env.TF_DIRECTORY}}
         shell: bash
         run: |
           terraform init
 
       - name: Terraform Plan
         id: plan
-        working-directory: ${{ matrix.TF_DIRECTORY}}
+        working-directory: ${{ env.TF_DIRECTORY}}
         shell: bash
         run: |
           echo 'plan<<EOF' 
@@ -73,5 +71,5 @@ jobs:
         id: save-artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.number}}-tf-plan
-          path: ${{ matrix.TF_DIRECTORY}}/tfplan
+          name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.push.number}}-tf-plan
+          path: ${{ env.TF_DIRECTORY}}/tfplan

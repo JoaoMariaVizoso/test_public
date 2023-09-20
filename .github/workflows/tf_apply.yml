@@ -1,0 +1,33 @@
+name: Terraform Apply
+
+on:
+  workflow_run:
+    workflows: ["Terraform Plan"]
+    types:
+      - completed
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Choose Terraform Plan
+        id: select-plan
+        run: |
+          # Use GitHub API to list artifacts from the latest run of the Terraform Plan workflow
+          latest_run_id=$(gh api "repos/${{ github.repository }}/actions/workflows/Terraform%20Plan/runs" | jq -r '.workflow_runs[0].id')
+          artifacts=$(gh api "repos/${{ github.repository }}/actions/runs/${latest_run_id}/artifacts" | jq -r '.artifacts[].name')
+          echo "::set-output name=plan::${artifacts}"
+        shell: bash
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ steps.select-plan.outputs.plan }}
+          path: ./tfplan
+
+      - name: Apply Terraform Plan
+        run: |
+          cd org/nprd
+          terraform init 
+          terraform apply --var-file='org/nprd/env.tfvars' -auto-approve tfplan

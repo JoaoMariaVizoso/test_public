@@ -14,7 +14,7 @@ terraform {
 
 # Create a Google Cloud Storage bucket
 resource "google_storage_bucket" "example_bucket" {
-  name          = "bucket-110920231244-prd"
+  name          = var.bucket_name
   location      = "US" 
 }
 

@@ -33,7 +33,7 @@ jobs:
         run: |
           cd org/nprd
           terraform init
-          terraform plan --var-file='org/nprd/env.tfvars' -out=tfplan
+          terraform plan --var-file='env.tfvars' -out=tfplan
         id: plan
 
       - name: Save Terraform Plan as Artifact

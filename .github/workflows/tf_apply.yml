@@ -48,4 +48,4 @@ jobs:
         run: |
           cd org/nprd
           terraform init 
-          terraform apply --var-file='org/nprd/env.tfvars' -auto-approve tfplan
+          terraform apply --var-file='env.tfvars' -auto-approve tfplan

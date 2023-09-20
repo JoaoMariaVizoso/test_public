@@ -57,9 +57,8 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            workflow: tf_plan.yaml
-            branch: development
-            name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.push.number}}-tf-plan
+            workflow: tf_plan.yml
+            name: ${{ steps.dir-id.outputs.DIR_NAME }}-tf-plan
             path: ${{ env.TF_DIRECTORY}}
 
 

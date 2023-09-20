@@ -1,1 +1,1 @@
-bucket_name = "bucket-110920231244-nprd-v2"
+bucket_name = "bucket-110920231244-nprd-v1"

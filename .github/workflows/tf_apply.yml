@@ -16,6 +16,7 @@ env:
 jobs:
   terraform_apply:
     runs-on: ubuntu-latest
+    environment: nprd
     strategy:
       fail-fast: false
       matrix:

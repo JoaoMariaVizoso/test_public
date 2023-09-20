@@ -18,7 +18,7 @@ resource "google_storage_bucket" "example_bucket" {
 }
 
 # Create a Google Cloud Storage bucket
-resource "google_storage_bucket" "example_bucket" {
+resource "google_storage_bucket" "example_bucket2" {
   name          = var.bucket_name2
   location      = "US" 
 }

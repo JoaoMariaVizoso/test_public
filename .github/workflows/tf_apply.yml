@@ -1,51 +1,83 @@
+# To use this workflow the following secrets should be stored in GH:
+#       TERRAFORM_SA
+#       GOOGLE_APPLICATION_CREDENTIALS
+
 name: Terraform Apply
 
+
+# This workflow is triggered once a PR is merged 
 on:
-  workflow_run:
-    workflows: ["Terraform Plan"]
-    types:
-      - completed
+  workflow_dispatch:
+
+# Define Terraform Version and directory where it will run
+env: 
+    TERRAFORM_VERSION: "1.2.9"
 
 jobs:
-  terraform-apply:
-    environment:  nprd
+  terraform_apply:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        TF_DIRECTORY: ["org/nprd"]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout code      
+        uses: actions/checkout@v3
+      
+      - name: Get Directory Name 
+        id: dir-id
+        shell: bash
+        env:
+          DIRECTORY: ${{ matrix.TF_DIRECTORY}}
+        run: | 
+          DIR_NAME=$(echo $DIRECTORY | awk 'BEGIN {FS= "/" } ; { print $2 }')
+          echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.2.9  # Replace with your desired Terraform version
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v1'
         with:
-          service_account: ${{ vars.TERRAFORM_SA }}
-          credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
-  
+          service_account: ${{ secrets.TERRAFORM_SA }}
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0.6.0'
-      - name: Choose Terraform Plan
-        id: select-plan
-        run: |
-          # Use GitHub API to list artifacts from the latest run of the Terraform Plan workflow
-          latest_run_id=$(gh api "repos/${{ github.repository }}/actions/workflows/Terraform%20Plan/runs" | jq -r '.workflow_runs[0].id')
-          artifacts=$(gh api "repos/${{ github.repository }}/actions/runs/${latest_run_id}/artifacts" | jq -r '.artifacts[].name')
-          echo "::set-output name=plan::${artifacts}"
+
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ matrix.TF_DIRECTORY}}
         shell: bash
-
-      - name: Download Terraform Plan
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ steps.select-plan.outputs.plan }}
-          path: ./tfplan
-
-      - name: Apply Terraform Plan
         run: |
-          cd org/nprd
-          terraform init 
-          terraform apply --var-file='env.tfvars' -auto-approve tfplan
+          terraform init
+      
+
+      - name: Download Plan
+        id: download-plan
+        uses: dawidd6/action-download-artifact@v2
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            workflow: tf_plan.yaml
+            name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.pull_request.number}}-tf-plan
+            path: ${{ matrix.TF_DIRECTORY}}
+
+
+      - name: Terraform Apply
+        id: apply
+        working-directory: ${{ matrix.TF_DIRECTORY}}
+        shell: bash
+        run: |
+            Terraform Apply for ${{ matrix.TF_DIRECTORY}}:
+            echo 'apply<<EOF' 
+            terraform apply -input=false -no-color tfplan 
+            echo 'EOF' 
+
+
+
+                ```
+    

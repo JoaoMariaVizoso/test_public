@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
             echo 'apply<<EOF' 
-            terraform apply --var-file='env.tfvars' -input=false -no-color tfplan 
+            terraform apply -input=false -no-color tfplan 
             echo 'EOF' 
 
 

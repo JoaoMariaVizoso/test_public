@@ -8,6 +8,7 @@ on:
 
 jobs:
   terraform-apply:
+    environment:  nprd
     runs-on: ubuntu-latest
 
     steps:

@@ -1,23 +1,45 @@
-name: Terraform Plan
+# To use this workflow the following secrets should be stored in GH:
+#       TERRAFORM_SA
+#       GOOGLE_APPLICATION_CREDENTIALS
 
+name: Terraform Setup and Plan 
+
+# This workflow is triggered once a PR is opened
 on:
-  push:
-    branches:
-      - main  # Replace with the branch you want to monitor for changes
+    push:
+      branches-ignore:    
+      - 'main'
 
-jobs:
-  terraform-plan:
-    environment:  nprd
+
+# Define Terraform Version and directory where it will run
+env: 
+  TERRAFORM_VERSION: "1.2.9"
+  TF_DIRECTORY: "org/nprd"
+
+jobs: 
+  terraform_plan:
     runs-on: ubuntu-latest
-
+    environment: nprd
+       
+    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+      
+      - name: Get Directory Name 
+        id: dir-id
+        shell: bash
+        env:
+          DIRECTORY: ${{ env.TF_DIRECTORY}}
+        run: | 
+          DIR_NAME=$(echo $DIRECTORY | awk 'BEGIN {FS= "/" } ; { print $2 }')
+          echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.2.9  # Replace with your desired Terraform version
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -25,19 +47,29 @@ jobs:
         with:
           service_account: ${{ vars.TERRAFORM_SA }}
           credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
-  
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
-      - name: Terraform Plan
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ env.TF_DIRECTORY}}
+        shell: bash
         run: |
-          cd org/nprd
           terraform init
-          terraform plan --var-file='env.tfvars' -out=tfplan
-        id: plan
 
-      - name: Save Terraform Plan as Artifact
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_DIRECTORY}}
+        shell: bash
+        run: |
+          echo 'plan<<EOF' 
+          terraform plan --var-file='env.tfvars' -no-color -out=tfplan 
+          echo 'EOF' 
+
+      - name: Save Artifact
+        id: save-artifact
         uses: actions/upload-artifact@v3
         with:
-          name: tfplan
-          path: "org/nprd/tfplan"
+          name: ${{ steps.dir-id.outputs.DIR_NAME }}-${{github.event.push.number}}-tf-plan
+          path: ${{ env.TF_DIRECTORY}}/tfplan

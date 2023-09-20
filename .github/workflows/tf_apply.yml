@@ -68,8 +68,4 @@ jobs:
         shell: bash
         run: |
             terraform apply -input=false -no-color tfplan 
-
-
-
-                ```
     

@@ -5,7 +5,7 @@ name: Terraform Apply
 on:
   workflow_dispatch:
     branches:
-      -
+      - develop
 
 # Define Terraform Version and directory where it will run
 env: 

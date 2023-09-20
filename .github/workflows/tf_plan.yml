@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           echo 'plan<<EOF' 
-          terraform plan -no-color -out=tfplan 
+          terraform plan --var-file='env.tfvars' -no-color -out=tfplan 
           echo 'EOF' 
 
       - name: Save Artifact

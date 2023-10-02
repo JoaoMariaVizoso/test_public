@@ -13,9 +13,6 @@ jobs:
     Build:
         runs-on: ubuntu-latest
         environment: nprd
-        permissions: 
-            contents: read
-            packages: write
         steps:
           - name: Checkout Code
             uses: actions/checkout@v3
@@ -26,6 +23,9 @@ jobs:
             with:
               service_account: ${{ secrets.TERRAFORM_SA }}
               credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
+
+          - name: 'Set up Cloud SDK'
+            uses: 'google-github-actions/setup-gcloud@v0.6.0'
                  
           - name: Login to GAR
             uses: docker/login-action@v3
@@ -33,6 +33,21 @@ jobs:
                 registry: ${{env.REGISTRY}}
                 username: _json_key #_json_key_base64
                 password: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS}}
-
-
-
+          
+          - name: Configure Docker Client
+            run:  |-
+                gcloud auth configure-docker --quiet 
+        
+          - name: Build Docker Image
+            env:
+                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
+            run: |
+                COMMIT_HASH=$(git rev-parse --short HEAD)
+                docker build -t $IMAGE_NAME:dev-$COMMIT_HASH .
+            
+            
+          - name: Push Docker Image to GAR
+            env: 
+                IMAGE_NAME: pv-stores
+            run: |-
+                docker push $IMAGE_NAME:dev-$COMMIT_HASH 

@@ -10,7 +10,8 @@ env:
 
 jobs: 
     
-    Build:
+    ContinuousIntergration:
+        if: github.event.review.state != 'approved'
         runs-on: ubuntu-latest
         environment: nprd
         steps:
@@ -50,11 +51,16 @@ jobs:
             env:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
             run: |
-                docker build -t $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} .
+                COMMIT_HASH=$(git rev-parse --short HEAD
+                docker build -t $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} -t $COMMIT_HASH .
             
             
           - name: Push Docker Image to GAR
             env: 
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
             run: |-
-                docker push $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} 
+                COMMIT_HASH=$(git rev-parse --short HEAD
+                docker push -t $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} -t $COMMIT_HASH 
+    
+
+                

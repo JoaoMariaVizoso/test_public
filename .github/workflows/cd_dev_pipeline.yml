@@ -1,0 +1,20 @@
+name: Deploy image to Dev env
+
+on:
+    pull_request:
+      branches: [main]
+      types: [closed]
+
+#On PR closure on main -> Pull image -> Re-tag image -> Deploy image 
+
+env:
+    REGISTRY: us-east1-docker.pkg.dev
+
+jobs: 
+    Deploy: 
+        runs-on: ubuntu-latest
+        environment: nprd
+        steps:
+          
+          - name: Checkout Code
+            uses: actions/checkout@v3

@@ -33,6 +33,23 @@ jobs:
                 registry: ${{env.REGISTRY}}
                 username: _json_key #_json_key_base64
                 password: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS}}
+          
+          - name: Build Docker Image
+            env:
+                IMAGE_NAME: pv-stores
+            run: |
+                COMMIT_HASH=$(git rev-parse --short HEAD)
+                docker build -t $IMAGE_NAME:dev-$COMMIT_HASH .
+            
+          - name: Configure Docker Client
+            run:  |-
+              gcloud auth configure-docker --quiet 
+            
+          - name: Push Docker Image to GAR
+            env: 
+                IMAGE_NAME: pv-stores
+            run: |-
+                docker push $IMAGE_NAME:dev-$COMMIT_HASH 
 
 
 

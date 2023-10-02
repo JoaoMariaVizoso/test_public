@@ -59,7 +59,7 @@ jobs:
             env: 
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
             run: |-
-                docker push $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} 
+                docker push $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} --all-tags
     
 
                 

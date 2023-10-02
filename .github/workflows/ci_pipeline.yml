@@ -59,8 +59,7 @@ jobs:
             env: 
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
             run: |-
-                COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker push -t $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} -t $COMMIT_HASH 
+                docker push $IMAGE_NAME:dev-${{ steps.extract_branch.outputs.branch }} 
     
 
                 

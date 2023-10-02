@@ -14,7 +14,7 @@ jobs:
         runs-on: ubuntu-latest
         environment: nprd
         permissions: 
-            contents: read
+            contents: write
             packages: write
         steps:
           - name: Checkout Code

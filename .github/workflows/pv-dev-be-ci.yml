@@ -48,6 +48,6 @@ jobs:
             
           - name: Push Docker Image to GAR
             env: 
-                IMAGE_NAME: pv-stores
+                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
             run: |-
                 docker push $IMAGE_NAME:dev-$COMMIT_HASH 

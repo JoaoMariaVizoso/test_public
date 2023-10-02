@@ -5,7 +5,6 @@ FROM ubuntu:20.04
 WORKDIR /app
 
 # Copy a local file from your host machine into the container
-COPY ./sample.txt /app/
+COPY /org /app/
 
-# Print the content of the copied file to the Docker container's standard output
-CMD ["cat", "sample.txt"]
+

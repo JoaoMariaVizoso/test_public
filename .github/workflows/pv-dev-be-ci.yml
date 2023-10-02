@@ -11,7 +11,7 @@ env:
 jobs: 
     
     Build:
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
         environment: nprd
         permissions: 
             contents: read

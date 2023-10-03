@@ -20,8 +20,11 @@ jobs:
 
           - name: Extract branch name
             shell: bash
-            run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
             id: extract_branch
+            env:
+              BRANCH: ${{ github.ref_name.heads}}
+            run: |-
+                echo "::set-output name=fragment::${BRANCH##*/}" >> $GITHUB_OUTPUT           
 
           - name: 'Authenticate to Google Cloud'
             id: auth

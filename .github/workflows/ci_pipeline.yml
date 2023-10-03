@@ -24,7 +24,12 @@ jobs:
             env:
               BRANCH: ${{ github.ref_name}}
             run: |-
-                echo "::set-output name=fragment::${BRANCH##*/}" >> $GITHUB_OUTPUT           
+                if [[ $input_string == *"/"* ]]; then
+                echo "::set-output name=fragment::${BRANCH##*/}" >> $GITHUB_OUTPUT
+                else
+                echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+                fi
+                           
 
           - name: 'Authenticate to Google Cloud'
             id: auth

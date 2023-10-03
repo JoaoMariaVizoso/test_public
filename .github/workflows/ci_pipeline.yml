@@ -49,15 +49,15 @@ jobs:
           
           - name: Build Docker Image
             env:
-                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
+                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:dev -t $IMAGE_NAME:${{ steps.extract_branch.outputs.branch }}-$COMMIT_HASH .
+                docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:${{ steps.extract_branch.outputs.branch }}-$COMMIT_HASH .
             
             
           - name: Push Docker Image to GAR
             env: 
-                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/dev/pv-stores
+                IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |-
                 docker push $IMAGE_NAME --all-tags
     

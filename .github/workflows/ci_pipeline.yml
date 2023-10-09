@@ -1,4 +1,4 @@
-name: Build and Push Image - BE
+name: Build and Push Image
 
 # This workflow is triggered once a PR is opened
 on:
@@ -60,7 +60,7 @@ jobs:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:${{ steps.extract_branch.outputs.fragment }}-$COMMIT_HASH .
+                docker build -t $IMAGE_NAME:${{ steps.extract_branch.outputs.fragment }}-$COMMIT_HASH .
             
             
           - name: Push Docker Image to GAR

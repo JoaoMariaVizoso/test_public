@@ -52,7 +52,7 @@ jobs:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker build -t $IMAGE_NAME:${{ steps.extract_branch.outputs.branch }} -t feature .
+                docker build -t $IMAGE_NAME:${{ steps.extract_branch.outputs.branch }} -t $IMAGE_NAME-feature .
             
             
           - name: Push Docker Image to GAR

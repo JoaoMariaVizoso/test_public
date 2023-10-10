@@ -47,13 +47,17 @@ jobs:
             run:  |-
                 gcloud auth configure-docker --quiet 
         
+          - name: Configure Docker Client
+            run:  |-
+                docker images 
+            
           
           - name: Retag Docker Image
             env:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker tag $IMAGE_NAME $IMAGE_NAME-dev 
+                docker tag $IMAGE_NAME:latest $IMAGE_NAME-dev 
 
 
 

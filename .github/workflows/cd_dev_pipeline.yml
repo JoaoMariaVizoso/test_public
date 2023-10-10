@@ -70,9 +70,9 @@ jobs:
             run:  |-
               docker images
 
-          - name: Docker pull
+          - name: Docker push
             run:  |-
-              docker push $IMAGE_NAME-dev
+              docker push us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores-dev:latest
 
 
                 

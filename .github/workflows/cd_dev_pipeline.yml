@@ -23,7 +23,6 @@ jobs:
             shell: bash
             run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
             id: extract_branch
- 
 
           - name: 'Authenticate to Google Cloud'
             id: auth
@@ -55,7 +54,6 @@ jobs:
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
                 docker tag $IMAGE_NAME $IMAGE_NAME-dev 
-    
 
 
 

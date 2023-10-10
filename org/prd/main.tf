@@ -18,13 +18,3 @@ resource "google_storage_bucket" "example_bucket" {
   location      = "US" 
 }
 
-
-
-
-
-
-
-
-
-
-

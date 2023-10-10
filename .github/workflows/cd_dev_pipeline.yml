@@ -21,16 +21,8 @@ jobs:
 
           - name: Extract branch name
             shell: bash
+            run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
             id: extract_branch
-            env:
-              BRANCH: ${{ github.ref_name}}
-            run: |-
-                if [[ $input_string == *"/"* ]]; then
-                echo "::set-output name=fragment::${BRANCH##*/}" >> $GITHUB_OUTPUT
-                else
-                echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-                fi
-                           
 
           - name: 'Authenticate to Google Cloud'
             id: auth
@@ -61,8 +53,7 @@ jobs:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker tag $IMAGE_NAME:${{ steps.extract_branch.outputs.fragment }}-$COMMIT_HASH $IMAGE_NAME:dev .
-    
+                docker tag $IMAGE_NAME $IMAGE_NAME-dev 
 
 
 

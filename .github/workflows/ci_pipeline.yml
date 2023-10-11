@@ -60,6 +60,10 @@ jobs:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |-
                 docker push $IMAGE_NAME --all-tags
+
+          - name: Docker Images
+            run: |-
+                docker images
     
 
 

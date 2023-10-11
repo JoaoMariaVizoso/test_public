@@ -64,15 +64,16 @@ jobs:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
                 COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker tag $IMAGE_NAME:latest $IMAGE_NAME-dev 
+                docker tag $IMAGE_NAME:latest $IMAGE_NAME:devEnv 
           
           - name: Docker images
             run:  |-
               docker images
 
           - name: Docker push
+            env:
+              IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run:  |-
-              docker push us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores-dev:latest
-
+              docker push --all-tags
 
                 

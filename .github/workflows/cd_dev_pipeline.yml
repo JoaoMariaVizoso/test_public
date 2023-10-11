@@ -74,6 +74,6 @@ jobs:
             env:
               IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run:  |-
-              docker push --all-tags
+              docker push $IMAGE_NAME --all-tags
 
                 

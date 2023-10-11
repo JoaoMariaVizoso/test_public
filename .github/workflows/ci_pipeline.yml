@@ -1,6 +1,6 @@
 name: Build and Push Image
 
-# This workflow is triggered once a PR is opened
+#Working good
 on:
     pull_request:
       branches: [main]

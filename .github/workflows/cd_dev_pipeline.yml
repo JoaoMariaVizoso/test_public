@@ -7,10 +7,6 @@ on:
 
 env:
     REGISTRY: us-east1-docker.pkg.dev
-    GKE_CLUSTER: autopilot-cluster-1
-    LOCATION: us-central1
-    DEPLOYMENT_YAML: first-deployment.yaml
-    PROJECT_ID: dynamic-circle-398514
 
 jobs: 
     Re-tag: 
@@ -91,12 +87,13 @@ jobs:
           run: gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project dynamic-circle-398514
 
         - name: kubectl - Google Cloud GKE cluster.
-        uses: ameydev/gke-kubectl-action@master
-        env:
-          PROJECT_ID: dynamic-circle-398514
-          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
-          CLUSTER_NAME: autopilot-cluster-1
-          ZONE_NAME: us-central1
-        with:
-          args: apply -f first-deployment.yml -n dev
+          uses: ameydev/gke-kubectl-action@master
+          env:
+            PROJECT_ID: dynamic-circle-398514
+            APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
+            CLUSTER_NAME: autopilot-cluster-1
+            ZONE_NAME: us-central1
+          with:
+            args: apply -f first-deployment.yml -n dev
+
 

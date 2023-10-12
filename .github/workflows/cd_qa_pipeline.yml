@@ -1,3 +1,0 @@
-name: Deploy image to QA env
-
-#On PR closure on main -> Pull image with latest tag -> Re-tag image (add qa tag) -> Deploy image to GKE 

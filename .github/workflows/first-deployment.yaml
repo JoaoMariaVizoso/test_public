@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zone-printer-deployment
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: zone-printer
+  template:
+    metadata:
+      labels:
+        app: zone-printer
+    spec:
+      containers:
+      - name: zone-printer
+        image: gcr.io/google-samples/zone-printer:0.2
+        ports:
+        - containerPort: 8080
+        livenessProbe: #There is a health probe listening on port 8080/healthz that will respond with 200 if the application is running
+          httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: zone-printer-service
+    namespace: dev
+    annotations:
+        cloud.google.com/neg: '{"ingress": true}'
+spec:
+    type: NodePort 
+    selector:
+        app: zone-printer
+    ports:
+    - protocol: TCP
+        port: 9000 
+        targetPort: 8080
+

@@ -88,6 +88,7 @@ jobs:
 
         - name: Install kubectl
           run: |
+            sudo apt-get update && sudo apt-get install
             sudo apt-get install kubectl
 
         - name: Deploy Release on cluster

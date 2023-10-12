@@ -77,12 +77,20 @@ jobs:
       runs-on: ubuntu-latest
       environment: nprd
       steps:  
-        - name: Get GKE credentials
-          uses: google-github-actions/get-gke-credentials@v1
+        - name: Authenticate to Google Cloud
+          id: auth
+          uses: 'google-github-actions/auth@v1'
           with:
-            cluster_name: ${{env.GKE_CLUSTER}}
-            location: ${{env.LOCATION}}
-            project_id: ${{env.PROJECT_ID}}
-       
+            service_account: ${{ secrets.TERRAFORM_SA }}
+            credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
+
+        - name: Set up Cloud SDK
+          uses: 'google-github-actions/setup-gcloud@v0.6.0'
+
+        - name: Get GKE credentials
+          run: gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project dynamic-circle-398514
+
         - name: Apply deployment
           run: 'kubectl apply -f ${{env.DEPLOYMENT_YAML}}'
+
+

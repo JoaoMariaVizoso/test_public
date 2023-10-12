@@ -90,7 +90,13 @@ jobs:
         - name: Get GKE credentials
           run: gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project dynamic-circle-398514
 
-        - name: Apply deployment
-          run: 'kubectl apply -f ${{env.DEPLOYMENT_YAML}}'
-
+        - name: kubectl - Google Cloud GKE cluster.
+        uses: ameydev/gke-kubectl-action@master
+        env:
+          PROJECT_ID: dynamic-circle-398514
+          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
+          CLUSTER_NAME: autopilot-cluster-1
+          ZONE_NAME: us-central1
+        with:
+          args: apply -f first-deployment.yml -n dev
 

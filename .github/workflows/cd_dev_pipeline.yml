@@ -10,6 +10,7 @@ env:
     GKE_CLUSTER: autopilot-cluster-1
     LOCATION: us-central1
     DEPLOYMENT_YAML: first-deployment.yaml
+    PROJECT_ID: dynamic-circle-398514
 
 jobs: 
     Re-tag: 
@@ -81,6 +82,7 @@ jobs:
           with:
             cluster_name: ${{env.GKE_CLUSTER}}
             location: ${{env.LOCATION}}
+            project_id: ${{env.PROJECT_ID}}
        
         - name: Apply deployment
           run: 'kubectl apply -f ${{env.DEPLOYMENT_YAML}}'

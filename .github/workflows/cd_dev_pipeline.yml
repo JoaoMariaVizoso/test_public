@@ -95,7 +95,7 @@ jobs:
           uses: ameydev/gke-kubectl-action@master
           env:
             PROJECT_ID: ${{ env.PROJECT_NAME }}
-            APPLICATION_CREDENTIALS: ${{ env.GOOGLE_ACCESS_CREDENTIALS }}
+            APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
             CLUSTER_NAME: ${{ env.CLUSTER_NAME }}
             ZONE_NAME: ${{ env.CLUSTER_NAME }}
           with:

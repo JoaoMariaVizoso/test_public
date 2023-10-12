@@ -20,6 +20,11 @@ jobs:
           - name: Checkout Code
             uses: actions/checkout@v3
 
+          - name: Extract branch name
+            shell: bash
+            run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+            id: extract_branch
+
           - name: Authenticate to Google Cloud
             id: auth
             uses: 'google-github-actions/auth@v1'
@@ -48,7 +53,7 @@ jobs:
 
           - name: Docker pull
             run:  |-
-                docker pull us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores:latest   
+                docker pull us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores:${{steps.extract_branch.outputs.branch}}  
           
           - name: Docker images
             run:  |-
@@ -58,8 +63,7 @@ jobs:
             env:
                 IMAGE_NAME: us-east1-docker.pkg.dev/dynamic-circle-398514/ecomm/pv-stores
             run: |
-                COMMIT_HASH=$(git rev-parse --short HEAD)
-                docker tag $IMAGE_NAME:latest $IMAGE_NAME:dev
+                docker tag $IMAGE_NAME:${{steps.extract_branch.outputs.branch}} $IMAGE_NAME:dev
           
           - name: Docker images
             run:  |-
@@ -76,24 +80,23 @@ jobs:
       runs-on: ubuntu-latest
       environment: nprd
       steps:  
+        - uses: actions/checkout@v3
         - name: Authenticate to Google Cloud
           id: auth
           uses: 'google-github-actions/auth@v1'
           with:
             service_account: ${{ secrets.TERRAFORM_SA }}
             credentials_json: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
-
+       
         - name: Set up Cloud SDK
           uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
-        - name: Install kubectl
-          uses: azure/setup-kubectl@v3
-
-        - name: Deploy Release on cluster
-          run: |
-            echo ${{secrets.GOOGLE_ACCESS_CREDENTIALS }} > key.json
-            gcloud auth activate-service-account --key-file=key.json
-            gcloud auth configure-docker
-            gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --zone ${{ env.CLUSTER_ZONE }} --project ${{ env.PROJECT_NAME }}
-            kubectl apply -f first-deployment.yaml
-
+        - name: kubectl - Google Cloud GKE cluster.
+          uses: ameydev/gke-kubectl-action@master
+          env:
+            PROJECT_ID: ${{ env.PROJECT_NAME }}
+            APPLICATION_CREDENTIALS: ${{ env.GOOGLE_ACCESS_CREDENTIALS }}
+            CLUSTER_NAME: ${{ env.CLUSTER_NAME }}
+            ZONE_NAME: ${{ env.CLUSTER_NAME }}
+          with:
+            args: apply -f first-deployment.yaml

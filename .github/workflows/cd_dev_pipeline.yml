@@ -91,10 +91,9 @@ jobs:
 
         - name: Deploy Release on cluster
           run: |
-            gcloud auth activate-service-account --key-file=${{secrets.GOOGLE_ACCESS_CREDENTIALS }}
+            echo ${{secrets.GOOGLE_ACCESS_CREDENTIALS }} > key.json
+            gcloud auth activate-service-account --key-file=key.json
             gcloud auth configure-docker
-            gcloud container clusters get-credentials \
-            ${{ env.CLUSTER_NAME }} --zone 
-            ${{ env.CLUSTER_ZONE }} --project ${{ env.PROJECT_NAME }}
+            gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --zone ${{ env.CLUSTER_ZONE }} --project ${{ env.PROJECT_NAME }}
             kubectl apply -f first-deployment.yaml
 

@@ -7,6 +7,9 @@ on:
 
 env:
     REGISTRY: us-east1-docker.pkg.dev
+    CLUSTER_NAME: autopilot-cluster-1 
+    CLUSTER_ZONE: us-central1
+    PROJECT_NAME: dynamic-circle-398514
 
 jobs: 
     Re-tag: 
@@ -83,17 +86,19 @@ jobs:
         - name: Set up Cloud SDK
           uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
-        - name: Get GKE credentials
-          run: gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project dynamic-circle-398514
+        - name: Install kubectl
+          run: |
+            sudo apt-get install kubectl
 
-        - name: kubectl - Google Cloud GKE cluster.
-          uses: ameydev/gke-kubectl-action@master
+        - name: Deploy Release on cluster
           env:
-            PROJECT_ID: dynamic-circle-398514
-            APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_ACCESS_CREDENTIALS }}
-            CLUSTER_NAME: autopilot-cluster-1
-            ZONE_NAME: us-central1
-          with:
-            args: apply -f first-deployment.yml -n dev
-
+            GCLOUD_KEY: ${{secrets.GOOGLE_ACCESS_CREDENTIALS }}
+          run: |
+            echo "$GCLOUD_KEY" | base64 --decode > ${HOME}/gcloud.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud.json
+            gcloud auth configure-docker
+            gcloud container clusters get-credentials \
+            ${{ env.CLUSTER_NAME }} --zone 
+            ${{ env.CLUSTER_ZONE }} --project ${{ env.PROJECT_NAME }}
+            kubectl apply -f first-deployment.yaml
 

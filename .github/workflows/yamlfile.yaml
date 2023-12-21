@@ -1,0 +1,30 @@
+name: Extract Build Args
+
+on:
+  push:
+
+jobs:
+  extract_build_args:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install PyYAML
+      run: pip install pyyaml
+
+    - name: Extract Build Args
+      run: |
+        yaml_file="inputs.yaml"
+        key="dev"
+
+        # Extract values associated with the key
+        dev_values=$(python -c "import yaml; data = yaml.safe_load(open('$yaml_file')); dev_values = ' '.join([f'--build-arg {k}={v}' for k, v in data.get('$key', {}).items()]); print(dev_values)")
+
+        echo "$dev_values"

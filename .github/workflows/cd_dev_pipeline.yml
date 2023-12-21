@@ -91,6 +91,7 @@ jobs:
         - name: Set up Cloud SDK
           uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
+
         - name: kubectl - Google Cloud GKE cluster.
           uses: ameydev/gke-kubectl-action@master
           env:

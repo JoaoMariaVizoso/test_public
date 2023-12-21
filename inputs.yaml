@@ -1,3 +1,6 @@
-  dev:
-      ENVIRONMENT_TAG: dev
-      SPRING_PROFILES_ACTIVE: dev
+dev:
+    ENVIRONMENT_TAG: dev
+    SPRING_PROFILES_ACTIVE: dev
+qa:
+    ENVIRONMENT_TAG: qa
+    SPRING_PROFILES_ACTIVE: qa

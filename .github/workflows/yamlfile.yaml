@@ -1,10 +1,10 @@
-name: YAML Iterator
+name: Extract Build Args
 
 on:
   push:
 
 jobs:
-  process_yaml:
+  extract_build_args:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,20 +16,15 @@ jobs:
       with:
         python-version: 3.x
 
-    - name: Install yq
+    - name: Install PyYAML
+      run: pip install pyyaml
+
+    - name: Extract Build Args
       run: |
-        python -m pip install --upgrade pip
-        pip install yq
+        yaml_file="path/to/your/file.yaml"
+        key="dev"
 
-    - name: Run YAML Iterator
-      run: |
-        # Your YAML processing script goes here
-        yaml_file="inputs.yaml"
+        # Extract values associated with the key
+        dev_values=$(python -c "import yaml; data = yaml.safe_load(open('$yaml_file')); dev_values = ' '.join([f'--build-arg {k}={v}' for k, v in data.get('$key', {}).items()]); print(dev_values)")
 
-        # Example: iterate over keys
-        keys=$(yq eval 'dev' "$yaml_file")
-
-        for key in $keys; do
-            echo "Processing key: $key"
-
-        done
+        echo "$dev_values"

@@ -27,9 +27,9 @@ jobs:
         yaml_file="inputs.yaml"
 
         # Example: iterate over keys
-        keys=$(yq eval 'keys' "$yaml_file")
+        keys=$(yq eval 'dev' "$yaml_file")
 
         for key in $keys; do
             echo "Processing key: $key"
-            
+
         done
